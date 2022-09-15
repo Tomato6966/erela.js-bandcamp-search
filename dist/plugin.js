@@ -49,7 +49,7 @@ class BandCampSearch extends erelajs.Plugin {
                 if (error) {
                     return rej(error)
                 } else {
-                    return res(searchResults.filter(x => x.type === "track").map(x =>this.convertToUnresolved(x)))
+                    return res(searchResults.filter(x => x.type === "track").map(x =>convertToUnresolved(x)))
                 }
             })
         })
@@ -87,25 +87,26 @@ class BandCampSearch extends erelajs.Plugin {
                 if (error) {
                     return rej(error)
                 } else {
-                    return res(this.convertToUnresolved(res))
+                    return res(convertToUnresolved(res))
                 }
             })
         })
     }
-    static convertToUnresolved(track) {
-        if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
-        if (!track.artist) throw new ReferenceError("The track artist array was not provided");
-        if (!track.title) throw new ReferenceError("The track title was not provided");
-        if (!track.url) throw new ReferenceError("The track url was not provided");
-        if (track.type !=="track") throw new ReferenceError("The track type is not a track");
-        if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
-        return {
-            identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
-            uri: track.url,
-            thumbnail: track.imageUrl,
-            author: track.artist,
-            title: track.name,
-        };
+};
+function convertToUnresolved(track) {
+    if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
+    if (!track.artist) throw new ReferenceError("The track artist array was not provided");
+    if (!track.title) throw new ReferenceError("The track title was not provided");
+    if (!track.url) throw new ReferenceError("The track url was not provided");
+    if (track.type !=="track") throw new ReferenceError("The track type is not a track");
+    
+    if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
+    return {
+        identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
+        uri: track.url,
+        thumbnail: track.imageUrl,
+        author: track.artist,
+        title: track.name,
     };
 };
 exports.BandCampSearch = BandCampSearch;
