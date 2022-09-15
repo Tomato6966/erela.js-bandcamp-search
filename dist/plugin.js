@@ -97,7 +97,8 @@ class BandCampSearch extends erelajs.Plugin {
                     return track;
                 }), null, null);
             }
-            const [, type, id] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
+            const [s, type, id] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
+            console.log(s, type, id)
             if (type === "track") {
                 try {
                     const data = yield this.getTrackData(finalQuery);
