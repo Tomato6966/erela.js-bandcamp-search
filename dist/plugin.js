@@ -54,10 +54,13 @@ class BandCampSearch extends erelajs.Plugin {
                     if(!filtered?.length) return [];
                     const formatted = [];
                     for(const track of filter) {
+                        console.log("TRACK DATA")
                         if(this.fetchDataAmount > formatted.length){
+                            console.log("FETCHING")
                             const data = yield this.getTrackData(track);
                             formatted.push(data);
                         } else {
+                            console.log("PUSHING")
                             formatted.push(convertToUnresolved(track));
                         }
                     }
