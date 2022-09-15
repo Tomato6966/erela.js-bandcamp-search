@@ -13,17 +13,10 @@ export declare class Deezer extends Plugin {
     private static convertToUnresolved;
 }
 export interface DeezerOptions {
-    /** Amount of pages to load, each page having 100 tracks. */
-    playlistLimit?: number;
-    /** Amount of pages to load, each page having 50 tracks. */
-    albumLimit?: number;
-    /** The Query source string(s) it shall use to detect deezer searchings (default is: ["deezer", "dz"]) */
+    /** of how many tracks it should fetch the data during the search, default 1. */
+    fetchData?: number;
+    /** The Query source string(s) it shall use to detect deezer searchings (default is: ["bandcamp", "bc"]) */
     querySource?: string[];
-    /**
-     * Whether to convert UnresolvedTracks to Track. Defaults to false.
-     * **Note: This is** ***not*** **recommended as it spams YouTube and takes a while if a large playlist is loaded.**
-     */
-    convertUnresolved?: boolean;
 }
 export interface Result {
     tracks: UnresolvedQuery[];

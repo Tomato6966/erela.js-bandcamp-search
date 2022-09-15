@@ -32,6 +32,7 @@ const buildSearch = (loadType, tracks, error, name) => ({
 class BandCampSearch extends erelajs.Plugin {
     constructor(options = {}) {
         super();
+        this.fetchDataAmount = options.fetchData && !!Number(options.fetchData) ? Number(options.fetchData) : 1;
         this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["bandcamp"];
     };
     load(manager) {
@@ -45,12 +46,23 @@ class BandCampSearch extends erelajs.Plugin {
                 query: 'Eminem Without me',
                 page: 1
             }
-            bandcamp.search(params, function (error, searchResults) {
+            bandcamp.search(params, async function (error, searchResults) {
                 if (error) {
                     return rej(error)
                 } else {
-                    console.log(searchResults.filter(x => x.type === "track"));
-                    return res(searchResults.filter(x => x.type === "track").map(x =>convertToUnresolved(x)))
+                    const filtered = searchResults.filter(x => x.type === "track");
+                    if(!filtered?.length) return [];
+                    const formatted = [];
+                    for(const track of filter) {
+                        if(this.fetchDataAmount > formatted.length){
+                            const data = yield this.getTrackData(track);
+                            console.log(data);
+                            formatted.push(convertToUnresolved(data));
+                        } else {
+                            formatted.push(convertToUnresolved(track));
+                        }
+                    }
+                    return res(formatted)
                 }
             })
         })
@@ -88,7 +100,6 @@ class BandCampSearch extends erelajs.Plugin {
                 if (error) {
                     return rej(error)
                 } else {
-                    console.log(res);
                     return res(convertToUnresolved(res))
                 }
             })
@@ -108,6 +119,7 @@ function convertToUnresolved(track) {
         thumbnail: track.imageUrl,
         author: track.artist,
         title: track.name,
+        duration: track.duration ? track.duration * 1000 : 0,
     };
 };
 exports.BandCampSearch = BandCampSearch;
