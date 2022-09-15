@@ -101,10 +101,9 @@ class BandCampSearch extends erelajs.Plugin {
             if (url && url.includes("bandcamp.com") && url.includes("track")) {
                 try {
                     const data = yield this.getTrackData(url);
-                    console.log(data)
                     if(!data) return buildSearch('NO_MATCHES', null, null, null);
                     const track = erelajs.TrackUtils.buildUnresolved(data, requester);
-                    return buildSearch(loadType, [track], null, name);
+                    return buildSearch("TRACK_LOADED", [track], null, null);
                     const msg = 'Incorrect type for Bandcamp URL, must be one of "track".';
                     return buildSearch("LOAD_FAILED", null, msg, null);
                 } catch (e) {
@@ -123,6 +122,7 @@ function convertToUnresolved(track) {
     if (!track.url) throw new ReferenceError("The track url was not provided");
     if (track.type && track.type !=="track") throw new ReferenceError("The track type is not a track it was: ", track.type);
     if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
+    console.log(track)
     const data = {
         identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
         uri: track.url,
