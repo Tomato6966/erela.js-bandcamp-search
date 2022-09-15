@@ -45,10 +45,7 @@ class BandCampSearch extends erelajs.Plugin {
         const maxAmount = this.fetchDataAmount;
         const fun = this.getTrackData
         return new Promise((res, rej) => {
-            const params = {
-                query: 'Eminem Without me',
-                page: 1
-            }
+            const params = { query, page: 1 }
             bandcamp.search(params, async function (error, searchResults) {
                 if (error) {
                     console.error("error", error);
@@ -128,7 +125,6 @@ function convertToUnresolved(track) {
     if (!track.url) throw new ReferenceError("The track url was not provided");
     if (track.type && track.type !=="track") throw new ReferenceError("The track type is not a track it was: ", track.type);
     if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
-    console.log(track.title)
     const data = {
         identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
         uri: track.url,
@@ -137,6 +133,7 @@ function convertToUnresolved(track) {
         title: track.title,
         duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
     };
+    console.log("bandcamp res", data.uri, data.thumbnail)
     return data;
 };
 exports.BandCampSearch = BandCampSearch;
