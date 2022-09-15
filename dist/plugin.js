@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BandCampSearch = void 0;
 const erelajs = require("erela.js");
 const bandcamp = require('bandcamp-scraper')
-const REGEX = "/^(https:\/\/)bandcamp\.com(\/track\/xx).*/;"
+const REGEX = "/^(http|https:\/\/)(.*).bandcamp\.com(\/track\/).*/;"
 const buildSearch = (loadType, tracks, error, name) => ({
     loadType: loadType,
     tracks: tracks !== null && tracks !== void 0 ? tracks : [],
