@@ -143,10 +143,7 @@ function convertToUnresolved(track, isFetched=false) {
                         } else {
                             const obj = convertToUnresolved(resda, true);
                             if(!obj) return res(old);
-                            old.duration = obj.duration ? obj.duration * 1000 : resda.raw ? resda.raw.trackinfo[0].duration * 1000 : 0;
-                            old.rawData = resda.raw?.trackinfo?.[0];
-                            old.fetchTrack = old.fetchTrack.bind(this);
-                            return res(obj);
+                            return res(erelajs.TrackUtils.buildUnresolved(obj, old.requester));
                         }
                     })
                 })
