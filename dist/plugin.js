@@ -116,6 +116,7 @@ class BandCampSearch extends erelajs.Plugin {
 };
 function convertToUnresolved(track) {
     if(!track) return;
+    if(!track.name) console.log(track);
     if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
     //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
     if (!track.name) throw new ReferenceError("The track title was not provided");
