@@ -14,7 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BandCampSearch = void 0;
 const erelajs = require("erela.js");
-const bandcamp = require('bandcamp-scraper')
+//const bcfetch = require('bandcamp-fetch');
+
+const axios = (require("axios"));
 const REGEX = /(.+\.bandcamp\.com.\S*)|(^bandcamp\.com.\S*)/gm;
 const buildSearch = (loadType, tracks, error, name) => ({
     loadType: loadType,
@@ -29,6 +31,11 @@ const buildSearch = (loadType, tracks, error, name) => ({
         severity: "COMMON"
     } : null,
 });
+const getSearchURL = (query) => `https://bandcamp.com/api/nusearch/2/autocomplete?q=${encodeURIComponent(query)}`;
+const headers = {
+    'User-Agent': 'android-async-http/1.4.1 (http://loopj.com/android-async-http)',
+    'Cookie': '$Version=1'
+}
 class BandCampSearch extends erelajs.Plugin {
     constructor(options = {}) {
         super();
@@ -41,56 +48,13 @@ class BandCampSearch extends erelajs.Plugin {
         this._search = manager.search.bind(manager);
         manager.search = this.search.bind(this);
     }
-    async searchBandCamp(query) {
-        const maxAmount = this.fetchDataAmount;
-        const fun = this.getTrackData
-        return new Promise((res, rej) => {
-            const params = { query, page: 1 }
-            bandcamp.search(params, async function (error, searchResults) {
-                if (error) {
-                    console.error("error", error);
-                    return rej(error)
-                } else {
-                    try {
-                        const filtered = searchResults.filter(x => x.type === "track");
-                        if(!filtered?.length) return [];
-                        const formatted = [];
-                        for(const track of filtered) {
-                            if(maxAmount > formatted.length){
-                                const data = await fun(track.url);
-                                formatted.push(data);
-                            } else {
-                                formatted.push(convertToUnresolved(track));
-                            }
-                        }
-                        return res(formatted)
-                    } catch(e) {
-                        console.error("error", e);
-                        return rej(error)
-                    }
-                }
-            })
-        })
-    }
-    async getTrackData(link, requester) {
-        return new Promise((res, rej) => {
-            bandcamp.getTrackInfo(link, function (error, resda) {
-                if (error) {
-                    console.error("error", error);
-                    return rej(error)
-                } else {
-                    return res(convertToUnresolved(resda))
-                }
-            })
-        })
-    }
     search(query, requester) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const finalQuery = query.query || query;
             if(typeof query === "object" && query.source && (this.querySource.includes(query.source))) {
                 console.log(`Search ${finalQuery} on bandcamp`);
-                const tracks = yield this.searchBandCamp(finalQuery)
+                const tracks = yield this.searchQuery(finalQuery)
                 if(tracks && tracks.length) return buildSearch("TRACK_LOADED", tracks.map(q => {
                     const track = erelajs.TrackUtils.buildUnresolved(q, requester);
                     track.thumbnail = q.thumbnail || track.thumbnail;
@@ -98,42 +62,49 @@ class BandCampSearch extends erelajs.Plugin {
                     return track;
                 }), null, null);
             }
-            const [url] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
-            if (!this.linksFetchedByLavalink && url && url.includes("bandcamp.com") && url.includes("track")) {
-                try {
-                    const data = yield this.getTrackData(url);
-                    if(!data) return buildSearch('NO_MATCHES', null, null, null);
-                    const track = erelajs.TrackUtils.buildUnresolved(data, requester);
-                    track.thumbnail = data.thumbnail || track.thumbnail;
-                    track.author = data.artist || track.author;
-                    return buildSearch("TRACK_LOADED", [track], null, null);
-                    const msg = 'Incorrect type for Bandcamp URL, must be one of "track".';
-                    return buildSearch("LOAD_FAILED", null, msg, null);
-                } catch (e) {
-                    return buildSearch((_b = e.loadType) !== null && _b !== void 0 ? _b : "LOAD_FAILED", null, (_c = e.message) !== null && _c !== void 0 ? _c : null, null);
-                };
-            };
+            //const [url] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
+            //if (!this.linksFetchedByLavalink && url && url.includes("bandcamp.com") && url.includes("track")) {
+            //    try {
+            //        const data = yield this.getTrackData(url);
+            //        if(!data) return buildSearch('NO_MATCHES', null, null, null);
+            //        const track = erelajs.TrackUtils.buildUnresolved(data, requester);
+            //        track.thumbnail = data.thumbnail || track.thumbnail;
+            //        track.author = data.artist || track.author;
+            //        return buildSearch("TRACK_LOADED", [track], null, null);
+            //        const msg = 'Incorrect type for Bandcamp URL, must be one of "track".';
+            //        return buildSearch("LOAD_FAILED", null, msg, null);
+            //    } catch (e) {
+            //        return buildSearch((_b = e.loadType) !== null && _b !== void 0 ? _b : "LOAD_FAILED", null, (_c = e.message) !== null && _c !== void 0 ? _c : null, null);
+            //    };
+            //};
+            // api end point: https://bandcamp.com/api/track/3/info?key=${key}&track_id=279317014
             return this._search(query, requester);
         });
     };
-};
-function convertToUnresolved(track) {
-    track.title = track.name || track.title;
-    if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
-    //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
-    if (!track.title) throw new ReferenceError("The track title was not provided");
-    if (!track.url) throw new ReferenceError("The track url was not provided");
-    if (track.type && track.type !=="track") throw new ReferenceError("The track type is not a track it was: ", track.type);
-    if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
-    const data = {
-        identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
-        uri: track.url,
-        thumbnail: track.imageUrl,
-        author: track.artist,
-        title: track.title,
-        duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
+    searchQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () { 
+            const { data } = yield axios.default.get(getSearchURL(query), { headers }).catch(() => { });
+            if(!data) return [];
+            const tracks = data?.results?.filter(x => x.type === "t").map?.(BandCampSearch.convertToUnresolved);
+            return tracks || [];
+        });
     };
-    console.log("bandcamp res", data.uri, data.thumbnail)
-    return data;
+    convertToUnresolved(track) {
+        if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
+        //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
+        if (!track.name) throw new ReferenceError("The track title was not provided");
+        if (!track.url) throw new ReferenceError("The track url was not provided");
+        if (track.type && track.type !=="t") throw new ReferenceError("The track type is not a t (track) it was: ", track.type);
+        if (typeof track.name !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
+        const data = {
+            identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
+            uri: track.url,
+            thumbnail: track.img,
+            author: track.band_name,
+            title: track.name,
+            duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
+        };
+        return data;
+    };
 };
 exports.BandCampSearch = BandCampSearch;

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "bandcamp-scraper": "^1.5.0",
+    "axios": "^0.27.2",
     "erela.js": "github:Tomato6966/erela.js"
   },
   "files": [
