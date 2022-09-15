@@ -59,7 +59,7 @@ class BandCampSearch extends erelajs.Plugin {
                         const formatted = [];
                         for(const track of filtered) {
                             if(maxAmount > formatted.length){
-                                const data = await fun(track);
+                                const data = await fun(track.url);
                                 formatted.push(data);
                             } else {
                                 formatted.push(convertToUnresolved(track));
@@ -81,7 +81,6 @@ class BandCampSearch extends erelajs.Plugin {
                     console.error("error", error);
                     return rej(error)
                 } else {
-                    console.log(resda, "res");
                     return res(convertToUnresolved(resda))
                 }
             })
@@ -129,7 +128,8 @@ function convertToUnresolved(track) {
         thumbnail: track.imageUrl,
         author: track.artist,
         title: track.name,
-        duration: track.duration ? track.duration * 1000 : 0,
+        duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
+        raw: track.raw,
     };
 };
 exports.BandCampSearch = BandCampSearch;
