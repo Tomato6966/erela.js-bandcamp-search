@@ -27,7 +27,8 @@ client.manager = new Manager({
     // Initiate the plugin
     new BandCampSearch({
       fetchData: 1, // how many tracks to be fetched on a track result.
-      querySource: ["bandcamp", "bc"] // match strings for the source: "string" when it decides to searchon bandcamp
+      querySource: ["bandcamp", "bc"], // match strings for the source: "string" when it decides to searchon bandcamp
+      linksFetchedByLavalink: true, // if you search by link, without the bandcamp source, then it will search via lavalink!
     })
   ]
 });
