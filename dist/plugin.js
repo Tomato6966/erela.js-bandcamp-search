@@ -48,25 +48,30 @@ class BandCampSearch extends erelajs.Plugin {
             }
             bandcamp.search(params, function* (error, searchResults) {
                 if (error) {
-                    console.error(err);
+                    console.error("error", error);
                     return rej(error)
                 } else {
-                    const filtered = searchResults.filter(x => x.type === "track");
-                    console.log("filtered", filtered.length)
-                    if(!filtered?.length) return [];
-                    const formatted = [];
-                    for(const track of filter) {
-                        console.log("TRACK DATA")
-                        if(this.fetchDataAmount > formatted.length){
-                            console.log("FETCHING")
-                            const data = yield this.getTrackData(track);
-                            formatted.push(data);
-                        } else {
-                            console.log("PUSHING")
-                            formatted.push(convertToUnresolved(track));
+                    try {
+                        const filtered = searchResults.filter(x => x.type === "track");
+                        console.log("filtered", filtered.length)
+                        if(!filtered?.length) return [];
+                        const formatted = [];
+                        for(const track of filter) {
+                            console.log("TRACK DATA")
+                            if(this.fetchDataAmount > formatted.length){
+                                console.log("FETCHING")
+                                const data = yield this.getTrackData(track);
+                                formatted.push(data);
+                            } else {
+                                console.log("PUSHING")
+                                formatted.push(convertToUnresolved(track));
+                            }
                         }
+                        return res(formatted)
+                    } catch(e) {
+                        console.error("error", e);
+                        return rej(error)
                     }
-                    return res(formatted)
                 }
             })
         })
@@ -75,7 +80,7 @@ class BandCampSearch extends erelajs.Plugin {
         return new Promise((res, rej) => {
             bandcamp.getTrackInfo(link, function (error, res) {
                 if (error) {
-                    console.error(err);
+                    console.error("error", error);
                     return rej(error)
                 } else {
                     console.log(res);
