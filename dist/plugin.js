@@ -130,19 +130,19 @@ function convertToUnresolved(track, isFetched=false) {
         title: track.title,
         duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
         rawData: isFetched ? track.raw.trackinfo[0] : null,
-        async fetchTrack() {
-            if(this.rawData && this.duration) {
-                return this;
+        async fetchTrack(providedData) {
+            const old = providedData || this;
+            if(old.rawData && old.duration) {
+                return old;
             } else {
                 return new Promise((res, rej) => {
-                    const old = this;
-                    bandcamp.getTrackInfo(this.uri, function (error, resda) {
+                    bandcamp.getTrackInfo(old.uri, function (error, resda) {
                         if (error) {
                             console.error("error", error);
                             return rej(error)
                         } else {
                             const obj = convertToUnresolved(resda, true);
-                            if(!obj) return res(old);
+                            if(!obj) return res(erelajs.TrackUtils.buildUnresolved(old, old.requester));
                             return res(erelajs.TrackUtils.buildUnresolved(obj, old.requester));
                         }
                     })
