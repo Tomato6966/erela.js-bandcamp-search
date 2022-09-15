@@ -94,7 +94,7 @@ class BandCampSearch extends erelajs.Plugin {
             return this._search(query, requester);
         });
     };
-    getTrackData(link) {
+    async getTrackData(link) {
         return new Promise((res, rej) => {
             bandcamp.getTrackInfo(link, function (error, res) {
                 if (error) {
