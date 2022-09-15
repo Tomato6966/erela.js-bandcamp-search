@@ -49,6 +49,7 @@ class BandCampSearch extends erelajs.Plugin {
                 if (error) {
                     return rej(error)
                 } else {
+                    console.log(searchResults.filter(x => x.type === "track"));
                     return res(searchResults.filter(x => x.type === "track").map(x =>convertToUnresolved(x)))
                 }
             })
@@ -87,6 +88,7 @@ class BandCampSearch extends erelajs.Plugin {
                 if (error) {
                     return rej(error)
                 } else {
+                    console.log(res);
                     return res(convertToUnresolved(res))
                 }
             })
