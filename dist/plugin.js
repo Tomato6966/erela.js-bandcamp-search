@@ -58,13 +58,10 @@ class BandCampSearch extends erelajs.Plugin {
                         if(!filtered?.length) return [];
                         const formatted = [];
                         for(const track of filtered) {
-                            console.log("TRACK DATA")
                             if(maxAmount > formatted.length){
-                                console.log("FETCHING")
                                 const data = await fun(track);
                                 formatted.push(data);
                             } else {
-                                console.log("PUSHING")
                                 formatted.push(convertToUnresolved(track));
                             }
                         }
@@ -84,7 +81,7 @@ class BandCampSearch extends erelajs.Plugin {
                     console.error("error", error);
                     return rej(error)
                 } else {
-                    console.log(res);
+                    console.log(res, "res");
                     return res(convertToUnresolved(res))
                 }
             })
@@ -95,7 +92,6 @@ class BandCampSearch extends erelajs.Plugin {
         return __awaiter(this, void 0, void 0, function* () {
             const finalQuery = query.query || query;
             if(typeof query === "object" && query.source && (this.querySource.includes(query.source))) {
-                console.log("SEARCHING ON BANDCAMP")
                 const tracks = yield this.searchBandCamp(finalQuery)
                 if(tracks && tracks.length) return buildSearch("TRACK_LOADED", tracks.map(query => {
                     const track = erelajs.TrackUtils.buildUnresolved(query, requester);
@@ -120,6 +116,7 @@ class BandCampSearch extends erelajs.Plugin {
     };
 };
 function convertToUnresolved(track) {
+    if(!track) return;
     if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
     //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
     if (!track.name) throw new ReferenceError("The track title was not provided");
