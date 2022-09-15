@@ -75,7 +75,7 @@ class BandCampSearch extends erelajs.Plugin {
         return new Promise((res, rej) => {
             bandcamp.getTrackInfo(link, function (error, res) {
                 if (error) {
-                    console.error(err);s
+                    console.error(err);
                     return rej(error)
                 } else {
                     console.log(res);
