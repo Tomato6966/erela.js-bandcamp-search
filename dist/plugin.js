@@ -41,25 +41,21 @@ class BandCampSearch extends erelajs.Plugin {
         manager.search = this.search.bind(this);
     }
     async searchBandCamp(query) {
-        console.log("F")
         return new Promise((res, rej) => {
-            console.log("R")
             const params = {
                 query: 'Eminem Without me',
                 page: 1
             }
             bandcamp.search(params, async function (error, searchResults) {
-                console.log("X")
                 if (error) {
                     console.error("error", error);
                     return rej(error)
                 } else {
                     try {
                         const filtered = searchResults.filter(x => x.type === "track");
-                        console.log("filtered", filtered.length)
                         if(!filtered?.length) return [];
                         const formatted = [];
-                        for(const track of filter) {
+                        for(const track of filtered) {
                             console.log("TRACK DATA")
                             if(this.fetchDataAmount > formatted.length){
                                 console.log("FETCHING")
