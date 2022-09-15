@@ -152,5 +152,6 @@ function convertToUnresolved(track, isFetched=false) {
         }
     };
     data.fetchTrack = data.fetchTrack.bind(data);
+    return data;
 };
 exports.BandCampSearch = BandCampSearch;
