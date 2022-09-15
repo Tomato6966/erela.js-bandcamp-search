@@ -81,7 +81,7 @@ class BandCampSearch extends erelajs.Plugin {
                     console.error("error", error);
                     return rej(error)
                 } else {
-                    return res(convertToUnresolved(resda))
+                    return res(convertToUnresolved(resda, true))
                 }
             })
         })
@@ -114,7 +114,7 @@ class BandCampSearch extends erelajs.Plugin {
         });
     };
 };
-function convertToUnresolved(track) {
+function convertToUnresolved(track, isFetched=false) {
     track.title = track.name || track.title;
     if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
     //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
@@ -122,14 +122,35 @@ function convertToUnresolved(track) {
     if (!track.url) throw new ReferenceError("The track url was not provided");
     if (track.type && track.type !=="track") throw new ReferenceError("The track type is not a track it was: ", track.type);
     if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
-    return {
+    const data = {
         identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
         uri: track.url,
         thumbnail: track.imageUrl,
         author: track.artist,
         title: track.title,
         duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
-        raw: track.raw,
+        rawData: isFetched ? track.raw.trackinfo[0] : null,
+        async fetchTrack() {
+            if(this.rawData && this.duration) {
+                return this;
+            } else {
+                return new Promise((res, rej) => {
+                    bandcamp.getTrackInfo(this.uri, function (error, resda) {
+                        if (error) {
+                            console.error("error", error);
+                            return rej(error)
+                        } else {
+                            const obj = convertToUnresolved(resda, true);
+                            this.duration = obj.duration ? obj.duration * 1000 : obj.raw ? obj.raw.trackinfo[0].duration * 1000 : 0;
+                            this.rawData = obj.trackinfo[0];
+                            this.fetchTrack = this.fetchTrack.bind(this);
+                            return res(obj);
+                        }
+                    })
+                })
+            }
+        }
     };
+    data.fetchTrack = data.fetchTrack.bind(data);
 };
 exports.BandCampSearch = BandCampSearch;

@@ -39,3 +39,21 @@ client.manager.search({
    query: "eminem"
 }, interaction.user);
 ```
+
+## Information
+
+When doing a search, you don't get the duration data..
+only:
+- title
+- thumbnail
+- author
+- uri
+
+To get the duration you have to do
+track = track.fetchTrack()
+
+
+you always have 
+track.rawData once it's fetched
+
+with the fetchData option, you can define how many tracks are fetched on default!
