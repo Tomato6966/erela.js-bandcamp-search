@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BandcampSearch = void 0;
+exports.BandCampSearch = void 0;
 const erelajs = require("erela.js");
 const bandcamp = require('bandcamp-scraper')
 const REGEX = "/^(https:\/\/)bandcamp\.com(\/track\/xx).*/;"
@@ -29,7 +29,7 @@ const buildSearch = (loadType, tracks, error, name) => ({
         severity: "COMMON"
     } : null,
 });
-class BandcampSearch extends erelajs.Plugin {
+class BandCampSearch extends erelajs.Plugin {
     constructor(options = {}) {
         super();
         this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["bandcamp"];
@@ -108,4 +108,4 @@ class BandcampSearch extends erelajs.Plugin {
         };
     };
 };
-exports.BandcampSearch = BandcampSearch;
+exports.BandCampSearch = BandCampSearch;
