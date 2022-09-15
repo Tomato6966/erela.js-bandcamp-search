@@ -46,7 +46,7 @@ class BandCampSearch extends erelajs.Plugin {
                 query: 'Eminem Without me',
                 page: 1
             }
-            bandcamp.search(params, function (error, searchResults) {
+            bandcamp.search(params, function* (error, searchResults) {
                 if (error) {
                     return rej(error)
                 } else {
@@ -66,7 +66,7 @@ class BandCampSearch extends erelajs.Plugin {
             })
         })
     }
-    async* getTrackData(link) {
+    async getTrackData(link) {
         return new Promise((res, rej) => {
             bandcamp.getTrackInfo(link, function (error, res) {
                 if (error) {
@@ -92,7 +92,7 @@ class BandCampSearch extends erelajs.Plugin {
             const [, type, id] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
             if (type === "track") {
                 try {
-                    const data = yield getTrackData(finalQuery);
+                    const data = yield this.getTrackData(finalQuery);
                     if(!data) return buildSearch('NO_MATCHES', null, null, null);
                     const track = erelajs.TrackUtils.buildUnresolved(data, requester);
                     return buildSearch(loadType, [track], null, name);
