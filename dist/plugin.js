@@ -92,6 +92,7 @@ class BandCampSearch extends erelajs.Plugin {
         return __awaiter(this, void 0, void 0, function* () {
             const finalQuery = query.query || query;
             if(typeof query === "object" && query.source && (this.querySource.includes(query.source))) {
+                console.log(`Search ${finalQuery} on bandcamp`);
                 const tracks = yield this.searchBandCamp(finalQuery)
                 if(tracks && tracks.length) return buildSearch("TRACK_LOADED", tracks.map(q => {
                     const track = erelajs.TrackUtils.buildUnresolved(q, requester);
