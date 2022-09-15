@@ -8,24 +8,25 @@
   ],
   "keywords": [
     "erela.js",
-    "deezer",
+    "bandcamp",
+    "search",
     "plugin"
   ],
-  "name": "better-erela.js-deezer",
+  "name": "erela.js-bandcamp-search",
   "version": "2.0.0",
-  "description": "Deezer plugin for Erela.JS",
+  "description": "Bandcamp search plugin for Erela.JS",
   "main": "dist/index.js",
   "author": "Tomato6966",
   "license": "MIT",
-  "homepage": "https://github.com/Tomato6966/better-erela.js-deezer",
+  "homepage": "https://github.com/Tomato6966/erela.js-bandcamp-search",
   "repository": {
-    "url": "git+https://github.com/Tomato6966/better-erela.js-deezer.git"
+    "url": "git+https://github.com/Tomato6966/erela.js-bandcamp-search.git"
   },
   "private": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bugs": {
-    "url": "https://github.com/Tomato6966/better-erela.js-deezer/issues"
+    "url": "https://github.com/Tomato6966/erela.js-bandcamp-search/issues"
   }
 }
