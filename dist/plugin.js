@@ -96,6 +96,8 @@ class BandCampSearch extends erelajs.Plugin {
                 const tracks = yield this.searchBandCamp(finalQuery)
                 if(tracks && tracks.length) return buildSearch("TRACK_LOADED", tracks.map(q => {
                     const track = erelajs.TrackUtils.buildUnresolved(q, requester);
+                    track.thumbnail = data.thumbnail || track.thumbnail;
+                    track.author = data.artist || track.author;
                     return track;
                 }), null, null);
             }
@@ -105,6 +107,8 @@ class BandCampSearch extends erelajs.Plugin {
                     const data = yield this.getTrackData(url);
                     if(!data) return buildSearch('NO_MATCHES', null, null, null);
                     const track = erelajs.TrackUtils.buildUnresolved(data, requester);
+                    track.thumbnail = data.thumbnail || track.thumbnail;
+                    track.author = data.artist || track.author;
                     return buildSearch("TRACK_LOADED", [track], null, null);
                     const msg = 'Incorrect type for Bandcamp URL, must be one of "track".';
                     return buildSearch("LOAD_FAILED", null, msg, null);
