@@ -135,15 +135,17 @@ function convertToUnresolved(track, isFetched=false) {
                 return this;
             } else {
                 return new Promise((res, rej) => {
+                    const old = this;
                     bandcamp.getTrackInfo(this.uri, function (error, resda) {
                         if (error) {
                             console.error("error", error);
                             return rej(error)
                         } else {
                             const obj = convertToUnresolved(resda, true);
-                            this.duration = obj.duration ? obj.duration * 1000 : obj.raw ? obj.raw.trackinfo[0].duration * 1000 : 0;
-                            this.rawData = obj.trackinfo[0];
-                            this.fetchTrack = this.fetchTrack.bind(this);
+                            if(!obj) return res(old);
+                            old.duration = obj.duration ? obj.duration * 1000 : obj.raw ? obj.raw.trackinfo[0].duration * 1000 : 0;
+                            old.rawData = obj.trackinfo[0];
+                            old.fetchTrack = old.fetchTrack.bind(this);
                             return res(obj);
                         }
                     })
