@@ -41,6 +41,8 @@ class BandCampSearch extends erelajs.Plugin {
         manager.search = this.search.bind(this);
     }
     async searchBandCamp(query) {
+        const maxAmount = this.fetchDataAmount;
+        const fun = this.getTrackData
         return new Promise((res, rej) => {
             const params = {
                 query: 'Eminem Without me',
@@ -57,9 +59,9 @@ class BandCampSearch extends erelajs.Plugin {
                         const formatted = [];
                         for(const track of filtered) {
                             console.log("TRACK DATA")
-                            if(this.fetchDataAmount > formatted.length){
+                            if(maxAmount > formatted.length){
                                 console.log("FETCHING")
-                                const data = await this.getTrackData(track);
+                                const data = await fun(track);
                                 formatted.push(data);
                             } else {
                                 console.log("PUSHING")
