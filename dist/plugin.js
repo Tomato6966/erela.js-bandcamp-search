@@ -128,7 +128,7 @@ function convertToUnresolved(track) {
     if (!track.url) throw new ReferenceError("The track url was not provided");
     if (track.type && track.type !=="track") throw new ReferenceError("The track type is not a track it was: ", track.type);
     if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
-    console.log(track)
+    console.log(track.title)
     const data = {
         identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
         uri: track.url,
