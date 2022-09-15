@@ -12,11 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Deezer = void 0;
-const erela_js_1 = require("erela.js");
-const axios_1 = __importDefault(require("axios"));
-const BASE_URL = 'https://api.deezer.com';
-const REGEX = /^(?:https?:\/\/|)?(?:www\.)?deezer\.com\/(?:\w{2}\/)?(track|album|playlist)\/(\d+)/;
+exports.BandcampSearch = void 0;
+const erelajs = require("erelajs");
+const bandcamp = require('bandcamp-scraper')
+const REGEX = /^(?:https?:\/\/|)?(?:wh-studio.\.)?bandcamp\.com\/(?:\w{2}\/)?(track)\/(\d+)/;
 const buildSearch = (loadType, tracks, error, name) => ({
     loadType: loadType,
     tracks: tracks !== null && tracks !== void 0 ? tracks : [],
@@ -30,71 +29,50 @@ const buildSearch = (loadType, tracks, error, name) => ({
         severity: "COMMON"
     } : null,
 });
-const check = (options) => {
-    if (typeof options.convertUnresolved !== "undefined" &&
-        typeof options.convertUnresolved !== "boolean")
-        throw new TypeError('Deezer option "convertUnresolved" must be a boolean.');
-    if (typeof options.playlistLimit !== "undefined" &&
-        typeof options.playlistLimit !== "number")
-        throw new TypeError('Deezer option "playlistLimit" must be a number.');
-    if (typeof options.albumLimit !== "undefined" &&
-        typeof options.albumLimit !== "number")
-        throw new TypeError('Deezer option "albumLimit" must be a number.');
-};
-class Deezer extends erela_js_1.Plugin {
+class BandcampSearch extends erelajs.Plugin {
     constructor(options = {}) {
         super();
-        check(options);
-
-        const defaultOptions = {
-            playlistLimit: 0,
-            albumLimit: 0,
-            convertUnresolved: false
-        };
-        const FUNCTIONS = {
-            track: this.getTrack.bind(this),
-            album: this.getAlbumTracks.bind(this),
-            playlist: this.getPlaylistTracks.bind(this),
-        };
-        this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["deezer", "dz"];
-
-        Object.defineProperty(this, 'functions', { value: FUNCTIONS });
-        Object.defineProperty(this, 'options', { value: Object.assign(defaultOptions, options) });
+        this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["bandcamp"];
     };
     load(manager) {
         this.manager = manager;
         this._search = manager.search.bind(manager);
         manager.search = this.search.bind(this);
     }
+    async searchBandCamp(query) {
+        return new Promise((res, rej) => {
+            const params = {
+                query: 'Eminem Without me',
+                page: 1
+            }
+            bandcamp.search(params, function (error, searchResults) {
+                if (error) {
+                    return rej(error)
+                } else {
+                    return res(searchResults.filter(x => x.type === "track").map(x =>convertToUnresolved(x)))
+                }
+            })
+        })
+    }
     search(query, requester) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const finalQuery = query.query || query;
             if(typeof query === "object" && query.source && (this.querySource.includes(query.source))) {
-                const tracks = yield this.searchQuery(finalQuery)
+                const tracks = yield this.searchBandCamp(finalQuery)
                 if(tracks && tracks.length) return buildSearch("TRACK_LOADED", tracks.map(query => {
-                    const track = erela_js_1.TrackUtils.buildUnresolved(query, requester);
-                    if (this.options.convertUnresolved) track.resolve();
+                    const track = erelajs.TrackUtils.buildUnresolved(query, requester);
                     return track;
                 }), null, null);
             }
             const [, type, id] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
-            if (type in this.functions) {
+            if (type === "track") {
                 try {
-                    const func = this.functions[type];
-                    if (func) {
-                        const data = yield func(id);
-                        const loadType = type === "track" ? "TRACK_LOADED" : "PLAYLIST_LOADED";
-                        const name = ["playlist", "album"].includes(type) ? data.name : null;
-                        if(!data || !data.tracks || !data.tracks[0]) return buildSearch('NO_MATCHES', null, null, null);
-                        const tracks = data.tracks.map(query => {
-                            const track = erela_js_1.TrackUtils.buildUnresolved(query, requester);
-                            if (this.options.convertUnresolved) track.resolve();
-                            return track;
-                        });
-                        return buildSearch(loadType, tracks, null, name);
-                    }
-                    const msg = 'Incorrect type for Deezer URL, must be one of "track", "album" or "playlist".';
+                    const data = yield getTrackData(finalQuery);
+                    if(!data) return buildSearch('NO_MATCHES', null, null, null);
+                    const track = erelajs.TrackUtils.buildUnresolved(data, requester);
+                    return buildSearch(loadType, [track], null, name);
+                    const msg = 'Incorrect type for Bandcamp URL, must be one of "track".';
                     return buildSearch("LOAD_FAILED", null, msg, null);
                 } catch (e) {
                     return buildSearch((_b = e.loadType) !== null && _b !== void 0 ? _b : "LOAD_FAILED", null, (_c = e.message) !== null && _c !== void 0 ? _c : null, null);
@@ -103,49 +81,31 @@ class Deezer extends erela_js_1.Plugin {
             return this._search(query, requester);
         });
     };
-    searchQuery(query) {
-        return __awaiter(this, void 0, void 0, function* () { // https://api.deezer.com/search/track?q=eminem
-            const { data: response } = yield axios_1.default.get(`${BASE_URL}/search/track?q=${encodeURIComponent(query)}`).catch(() => { });
-            if(!response) return [];
-            const tracks = response?.data?.map?.(item => Deezer.convertToUnresolved(item));
-            return tracks || [];
-        });
-    };
-    getAlbumTracks(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { data: album } = yield axios_1.default.get(`${BASE_URL}/album/${id}`);
-            const tracks = album.tracks.data.map(item => Deezer.convertToUnresolved(item));
-            return { tracks: this.options.albumLimit <= 0 ? tracks : tracks.splice(0, this.options.albumLimit), name: album.title };
-        });
-    };
-    getPlaylistTracks(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { data: playlist } = yield axios_1.default.get(`${BASE_URL}/playlist/${id}`);
-            const tracks = playlist.tracks.data.map(item => Deezer.convertToUnresolved(item));
-            return { tracks: this.options.playlistLimit <= 0 ? tracks : tracks.splice(0, this.options.playlistLimit), name: playlist.title };
-        });
-    };
-    getTrack(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { data } = yield axios_1.default.get(`${BASE_URL}/track/${id}`);
-            const track = Deezer.convertToUnresolved(data);
-            return { tracks: [track] };
-        });
-    };
+    getTrackData(link) {
+        return new Promise((res, rej) => {
+            bandcamp.getTrackInfo(link, function (error, res) {
+                if (error) {
+                    return rej(error)
+                } else {
+                    return res(convertToUnresolved(res))
+                }
+            })
+        })
+    }
     static convertToUnresolved(track) {
-        if (!track) throw new ReferenceError("The Deezer track object was not provided");
+        if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
         if (!track.artist) throw new ReferenceError("The track artist array was not provided");
         if (!track.title) throw new ReferenceError("The track title was not provided");
+        if (!track.url) throw new ReferenceError("The track url was not provided");
+        if (track.type !=="track") throw new ReferenceError("The track type is not a track");
         if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
         return {
-            identifier: track.id ? `${track.id}` : undefined,
-            uri: track.link ?? track.id ? `https://deezer.com/track/${track.id}` : undefined,
-            thumbnail: track.md5_image ? `https://e-cdn-images.dzcdn.net/images/cover/${track.md5_image}/264x264-000000-80-0-0.jpg` : undefined,
-            preview: track.preview ? `${track.preview}` : undefined,
-            author: track.artist ? `${track.artist.name}` : undefined,
-            title: track.title ? `${track.title}` : track.title_short ? `${track.title_short}` : "Unknown Title",
-            duration: track.duration * 1000,
+            identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
+            uri: track.url,
+            thumbnail: track.imageUrl,
+            author: track.artist,
+            title: track.name,
         };
     };
 };
-exports.Deezer = Deezer;
+exports.BandcampSearch = BandcampSearch;
