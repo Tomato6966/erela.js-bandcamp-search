@@ -48,6 +48,7 @@ class BandCampSearch extends erelajs.Plugin {
             }
             bandcamp.search(params, function* (error, searchResults) {
                 if (error) {
+                    console.error(err);
                     return rej(error)
                 } else {
                     const filtered = searchResults.filter(x => x.type === "track");
@@ -74,6 +75,7 @@ class BandCampSearch extends erelajs.Plugin {
         return new Promise((res, rej) => {
             bandcamp.getTrackInfo(link, function (error, res) {
                 if (error) {
+                    console.error(err);s
                     return rej(error)
                 } else {
                     console.log(res);
