@@ -100,7 +100,8 @@ class BandCampSearch extends erelajs.Plugin {
             const [url] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
             if (url && url.includes("bandcamp.com") && url.includes("track")) {
                 try {
-                    const data = yield this.getTrackData(finalQuery);
+                    const data = yield this.getTrackData(url);
+                    console.log(data)
                     if(!data) return buildSearch('NO_MATCHES', null, null, null);
                     const track = erelajs.TrackUtils.buildUnresolved(data, requester);
                     return buildSearch(loadType, [track], null, name);
