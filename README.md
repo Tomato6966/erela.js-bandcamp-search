@@ -49,11 +49,6 @@ only:
 - author
 - uri
 
-To get the duration you have to do
-track = track.fetchTrack()
+To get the duration you have to resolve it!
 
-
-you always have 
-track.rawData once it's fetched
-
-with the fetchData option, you can define how many tracks are fetched on default!
+OR you have to increase the option#fetchData

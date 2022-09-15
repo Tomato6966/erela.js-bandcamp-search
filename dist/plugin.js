@@ -74,14 +74,14 @@ class BandCampSearch extends erelajs.Plugin {
             })
         })
     }
-    async getTrackData(link) {
+    async getTrackData(link, requester) {
         return new Promise((res, rej) => {
             bandcamp.getTrackInfo(link, function (error, resda) {
                 if (error) {
                     console.error("error", error);
                     return rej(error)
                 } else {
-                    return res(convertToUnresolved(resda, true))
+                    return res(convertToUnresolved(resda))
                 }
             })
         })
@@ -114,7 +114,7 @@ class BandCampSearch extends erelajs.Plugin {
         });
     };
 };
-function convertToUnresolved(track, isFetched=false) {
+function convertToUnresolved(track) {
     track.title = track.name || track.title;
     if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
     //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
@@ -129,28 +129,7 @@ function convertToUnresolved(track, isFetched=false) {
         author: track.artist,
         title: track.title,
         duration: track.duration ? track.duration * 1000 : track.raw ? track.raw.trackinfo[0].duration * 1000 : 0,
-        rawData: isFetched ? track.raw.trackinfo[0] : null,
-        async fetchTrack(providedData) {
-            const old = providedData || this;
-            if(old.rawData && old.duration) {
-                return old;
-            } else {
-                return new Promise((res, rej) => {
-                    bandcamp.getTrackInfo(old.uri, function (error, resda) {
-                        if (error) {
-                            console.error("error", error);
-                            return rej(error)
-                        } else {
-                            const obj = convertToUnresolved(resda, true);
-                            if(!obj) return res(erelajs.TrackUtils.buildUnresolved(old, old.requester));
-                            return res(erelajs.TrackUtils.buildUnresolved(obj, old.requester));
-                        }
-                    })
-                })
-            }
-        }
     };
-    data.fetchTrack = data.fetchTrack.bind(data);
     return data;
 };
 exports.BandCampSearch = BandCampSearch;
