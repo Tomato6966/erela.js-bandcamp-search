@@ -66,6 +66,18 @@ class BandCampSearch extends erelajs.Plugin {
             })
         })
     }
+    async* getTrackData(link) {
+        return new Promise((res, rej) => {
+            bandcamp.getTrackInfo(link, function (error, res) {
+                if (error) {
+                    return rej(error)
+                } else {
+                    console.log(res);
+                    return res(convertToUnresolved(res))
+                }
+            })
+        })
+    }
     search(query, requester) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
@@ -93,18 +105,6 @@ class BandCampSearch extends erelajs.Plugin {
             return this._search(query, requester);
         });
     };
-    async getTrackData(link) {
-        return new Promise((res, rej) => {
-            bandcamp.getTrackInfo(link, function (error, res) {
-                if (error) {
-                    return rej(error)
-                } else {
-                    console.log(res);
-                    return res(convertToUnresolved(res))
-                }
-            })
-        })
-    }
 };
 function convertToUnresolved(track) {
     if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
