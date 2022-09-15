@@ -98,11 +98,10 @@ class BandCampSearch extends erelajs.Plugin {
 function convertToUnresolved(track) {
     if (!track) throw new ReferenceError("The Bandcamp track object was not provided");
     //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
-    if (!track.title) throw new ReferenceError("The track title was not provided");
+    if (!track.name) throw new ReferenceError("The track title was not provided");
     if (!track.url) throw new ReferenceError("The track url was not provided");
     if (track.type !=="track") throw new ReferenceError("The track type is not a track");
-    
-    if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
+    if (typeof track.name !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
     return {
         identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],
         uri: track.url,
