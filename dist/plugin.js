@@ -34,7 +34,7 @@ class BandCampSearch extends erelajs.Plugin {
         super();
         this.linksFetchedByLavalink = options.linksFetchedByLavalink ?? true;
         this.fetchDataAmount = options.fetchData && !!Number(options.fetchData) ? Number(options.fetchData) : 1;
-        this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["bandcamp"];
+        this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["bandcamp", "bc"];
     };
     load(manager) {
         this.manager = manager;
