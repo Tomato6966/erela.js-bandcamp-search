@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BandcampSearch = void 0;
-const erelajs = require("erelajs");
+const erelajs = require("erela.js");
 const bandcamp = require('bandcamp-scraper')
-const REGEX = /^(?:https?:\/\/|)?(?:wh-studio.\.)?bandcamp\.com\/(?:\w{2}\/)?(track)\/(\d+)/;
+const REGEX = "/^(https:\/\/)bandcamp\.com(\/track\/xx).*/;"
 const buildSearch = (loadType, tracks, error, name) => ({
     loadType: loadType,
     tracks: tracks !== null && tracks !== void 0 ? tracks : [],
