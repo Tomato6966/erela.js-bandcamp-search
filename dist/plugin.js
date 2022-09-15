@@ -76,13 +76,13 @@ class BandCampSearch extends erelajs.Plugin {
     }
     async getTrackData(link) {
         return new Promise((res, rej) => {
-            bandcamp.getTrackInfo(link, function (error, res) {
+            bandcamp.getTrackInfo(link, function (error, resda) {
                 if (error) {
                     console.error("error", error);
                     return rej(error)
                 } else {
-                    console.log(res, "res");
-                    return res(convertToUnresolved(res))
+                    console.log(resda, "res");
+                    return res(convertToUnresolved(resda))
                 }
             })
         })
