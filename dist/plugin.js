@@ -32,6 +32,7 @@ const buildSearch = (loadType, tracks, error, name) => ({
 class BandCampSearch extends erelajs.Plugin {
     constructor(options = {}) {
         super();
+        this.linksFetchedByLavalink = options.linksFetchedByLavalink ?? true;
         this.fetchDataAmount = options.fetchData && !!Number(options.fetchData) ? Number(options.fetchData) : 1;
         this.querySource = options.querySource && Array.isArray(options.querySource) ? options.querySource : ["bandcamp"];
     };
@@ -98,7 +99,7 @@ class BandCampSearch extends erelajs.Plugin {
                 }), null, null);
             }
             const [url] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
-            if (url && url.includes("bandcamp.com") && url.includes("track")) {
+            if (!this.linksFetchedByLavalink && url && url.includes("bandcamp.com") && url.includes("track")) {
                 try {
                     const data = yield this.getTrackData(url);
                     if(!data) return buildSearch('NO_MATCHES', null, null, null);

@@ -17,6 +17,8 @@ export interface DeezerOptions {
     fetchData?: number;
     /** The Query source string(s) it shall use to detect deezer searchings (default is: ["bandcamp", "bc"]) */
     querySource?: string[];
+    /** If links shall be fetched by lavalink */
+    linksFetchedByLavalink?: Boolean;
 }
 export interface Result {
     tracks: UnresolvedQuery[];
