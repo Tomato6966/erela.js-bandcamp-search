@@ -120,7 +120,7 @@ function convertToUnresolved(track) {
     //if (!track.artist) throw new ReferenceError("The track artist array was not provided");
     if (!track.title) throw new ReferenceError("The track title was not provided");
     if (!track.url) throw new ReferenceError("The track url was not provided");
-    if (track.type !=="track") throw new ReferenceError("The track type is not a track");
+    if (track.type && track.type !=="track") throw new ReferenceError("The track type is not a track it was: ", track.type);
     if (typeof track.title !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track.name}`);
     return {
         identifier: track.id ? `${track.id}` : track.url?.split("/").reverse()[0],

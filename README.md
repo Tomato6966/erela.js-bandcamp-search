@@ -25,7 +25,10 @@ const BandCampSearch = require("erela.js-bandcamp-search");
 client.manager = new Manager({
   plugins: [
     // Initiate the plugin
-    new BandCampSearch()
+    new BandCampSearch({
+      fetchData: 1, // how many tracks to be fetched on a track result.
+      querySource: ["bandcamp", "bc"] // match strings for the source: "string" when it decides to searchon bandcamp
+    })
   ]
 });
 // search urls
