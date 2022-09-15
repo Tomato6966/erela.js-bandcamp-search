@@ -48,7 +48,7 @@ class BandCampSearch extends erelajs.Plugin {
                 query: 'Eminem Without me',
                 page: 1
             }
-            bandcamp.search(params, function* (error, searchResults) {
+            bandcamp.search(params, async function (error, searchResults) {
                 console.log("X")
                 if (error) {
                     console.error("error", error);
@@ -63,7 +63,7 @@ class BandCampSearch extends erelajs.Plugin {
                             console.log("TRACK DATA")
                             if(this.fetchDataAmount > formatted.length){
                                 console.log("FETCHING")
-                                const data = yield this.getTrackData(track);
+                                const data = await this.getTrackData(track);
                                 formatted.push(data);
                             } else {
                                 console.log("PUSHING")
