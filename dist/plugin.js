@@ -96,8 +96,8 @@ class BandCampSearch extends erelajs.Plugin {
                 const tracks = yield this.searchBandCamp(finalQuery)
                 if(tracks && tracks.length) return buildSearch("TRACK_LOADED", tracks.map(q => {
                     const track = erelajs.TrackUtils.buildUnresolved(q, requester);
-                    track.thumbnail = data.thumbnail || track.thumbnail;
-                    track.author = data.artist || track.author;
+                    track.thumbnail = q.thumbnail || track.thumbnail;
+                    track.author = q.artist || track.author;
                     return track;
                 }), null, null);
             }
