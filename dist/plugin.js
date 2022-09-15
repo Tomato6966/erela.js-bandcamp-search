@@ -51,6 +51,7 @@ class BandCampSearch extends erelajs.Plugin {
                     return rej(error)
                 } else {
                     const filtered = searchResults.filter(x => x.type === "track");
+                    console.log("filtered", filtered.length)
                     if(!filtered?.length) return [];
                     const formatted = [];
                     for(const track of filter) {
