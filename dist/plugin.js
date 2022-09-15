@@ -97,9 +97,8 @@ class BandCampSearch extends erelajs.Plugin {
                     return track;
                 }), null, null);
             }
-            const [url, ...s] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
-            console.log(url, s)
-            if (type === "track") {
+            const [url] = (_a = finalQuery.match(REGEX)) !== null && _a !== void 0 ? _a : [];
+            if (url && url.includes("bandcamp.com") && url.includes("track")) {
                 try {
                     const data = yield this.getTrackData(finalQuery);
                     if(!data) return buildSearch('NO_MATCHES', null, null, null);
