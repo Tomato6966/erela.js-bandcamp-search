@@ -48,7 +48,7 @@ class BandCampSearch extends erelajs.Plugin {
         this._search = manager.search.bind(manager);
         manager.search = this.search.bind(this);
     }
-    search(query, requester) {
+    search(query, requester, cusotmNode) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const finalQuery = query.query || query;
@@ -78,7 +78,7 @@ class BandCampSearch extends erelajs.Plugin {
             //    };
             //};
             // api end point: https://bandcamp.com/api/track/3/info?key=${key}&track_id=279317014
-            return this._search(query, requester);
+            return this._search(query, requester, cusotmNode);
         });
     };
     searchQuery(query) {
