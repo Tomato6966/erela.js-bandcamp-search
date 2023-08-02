@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
     "erela.js": "github:Tomato6966/erela.js"
   },
   "files": [
